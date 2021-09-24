@@ -5,14 +5,14 @@ const bcrypt = require('bcryptjs')
 const nodemailer = require("nodemailer");
 const crypto = require('crypto');
 const { reset } = require('nodemon');
-
+const keys = require('../keys/dev')
 
 const transporter = nodemailer.createTransport({
     host: 'smtp.gmail.com',
     port: 587,
     auth: {
-        user: 'nodirbekmarasulov1@gmail.com', //Remove '@gmail.com' from your username.
-        pass: 'nodir1994'
+        user: keys.SYSTEM_EMAIL, //Remove '@gmail.com' from your username.
+        pass: keys.PSSWORD_EMAIL
     }
 });
 router.get('/login', async (req, res) => {
@@ -43,7 +43,7 @@ router.post('/reg', async (req, res) => {
         email
     })
     if (reallyMen) {
-        req.flash('error', 'Bunday emaildagi foydalanuvchi mavjud!')
+        req.flash('error','Bunday emaildagi foydalanuvchi mavjud!')
         res.redirect('/auth/registration')
     } else {
         const hashPass = await bcrypt.hash(password, 10)
@@ -54,9 +54,11 @@ router.post('/reg', async (req, res) => {
             password: hashPass
         })
         await really.save()
+
         ////////////////////////
+        
         await transporter.sendMail({
-            form: 'nodirbekmarasulov1@gmail.com',
+            form: keys.SYSTEM_EMAIL,
             to:email,
             subject:'Ro`yhatdan o`tildi',
             html:`<h1>Hurmatli ${name}, siz tizimda ro'yhatdan o'tdingiz</h1>`
@@ -121,7 +123,7 @@ router.post('/reset',async(req,res)=>{
                     resetBoy.resetTokenExp = Date.now() + 60 * 60 * 10000
                     await resetBoy.save()
                     await transporter.sendMail({
-                        form: 'nodirbekmarasulov1@gmail.com',
+                        form: keys.SYSTEM_EMAIL,
                         to: email,
                         subject: 'Mahfiy kalitni tiklash',
                         html: `<h1>Hurmatli  foydalanuvchi tizimda mahfiy kalit tiklash jarayoni bolyapti</h1>

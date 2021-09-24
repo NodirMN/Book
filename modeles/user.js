@@ -16,9 +16,6 @@ const user = new Schema({
         type: Array, 
         default: [] 
     },
-    avatar: { 
-        type: String,
-        default: '' 
-    }
+    img: String,
 })
 module.exports = model('User',user)
